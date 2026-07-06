@@ -1,0 +1,23 @@
+/* index.css — Google Fonts import + base reset. Ye file already Vite se
+   bani hoti hai, bas content replace karna hai. */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@300;400;500&display=swap');
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #0d0d0f;
+  color: #f0efec;
+  font-family: "Inter", sans-serif;
+}
+
+h1, h2, h3 {
+  font-family: "Poppins", sans-serif;
+}
+
+a {
+  color: inherit;
+}

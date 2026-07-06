@@ -1,0 +1,60 @@
+// components/Hero3D.jsx
+import { Canvas, useFrame } from "@react-three/fiber";
+import { Image } from "@react-three/drei";
+import { Suspense, useRef, useEffect } from "react";
+import * as THREE from "three";
+
+function ScrollImage({ imageUrl, scrollRef }) {
+  const meshRef = useRef();
+  // Fade-in ke liye — 0 se shuru, gradually 1 tak jayega
+  const opacityRef = useRef(0);
+
+  useFrame((state, delta) => {
+    if (!meshRef.current) return;
+
+    // Fade-in: har frame pe opacity thodi barhao, jab tak 1 (fully visible) na ho jaye.
+    // delta * 1 = takriban 1 second mein pura fade-in ho jayega.
+    opacityRef.current = Math.min(opacityRef.current + delta * 1, 1);
+    if (meshRef.current.material) {
+      meshRef.current.material.opacity = opacityRef.current;
+      meshRef.current.material.transparent = true;
+    }
+
+    const targetRotationY = scrollRef.current * 0.002;
+    meshRef.current.rotation.y = THREE.MathUtils.lerp(
+      meshRef.current.rotation.y,
+      targetRotationY,
+      0.05
+    );
+
+    const targetY = Math.sin(scrollRef.current * 0.002) * 0.15;
+    meshRef.current.position.y = THREE.MathUtils.lerp(
+      meshRef.current.position.y,
+      targetY,
+      0.05
+    );
+  });
+
+  return <Image ref={meshRef} url={imageUrl} scale={[2.4, 3, 1]} radius={0.05} />;
+}
+
+export default function Hero3D({ imageUrl }) {
+  const scrollRef = useRef(0);
+
+  useEffect(() => {
+    function handleScroll() {
+      scrollRef.current = window.scrollY;
+    }
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  return (
+    <Canvas camera={{ position: [0, 0, 4], fov: 35 }}>
+      <ambientLight intensity={1} />
+      <Suspense fallback={null}>
+        <ScrollImage imageUrl={imageUrl} scrollRef={scrollRef} />
+      </Suspense>
+    </Canvas>
+  );
+}
